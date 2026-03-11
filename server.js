@@ -19,7 +19,7 @@ app.post('/submit', async (req, res) => {
         .insert([data]);
 
         if (error) {
-            console.error(`Supabase insert error: ${error}`)
+            console.error("Supabase insert error:", error);
             return res.status(500).json({ status: 'error', error});
         }
 
