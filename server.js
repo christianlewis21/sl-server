@@ -16,7 +16,7 @@ app.post('/submit', async (req, res) => {
     try {
         const { error } = await supabase
         .from('stats_leaderboard')
-        .insert([data]);
+        .upsert([data], { onConflict: "steam_id "});
 
         if (error) {
             console.error("Supabase insert error:", error);
