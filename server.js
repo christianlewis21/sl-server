@@ -25,9 +25,28 @@ app.post('/submit', async (req, res) => {
 
         res.json({ status: 'ok'});
     }   catch (err) {
-        console.error(`Unexpected error: ${err}`);
+        console.error("Unexpected error:", err);
         res.status(500).json({ status: 'error', error: err.message})
     }
+});
+
+app.get('/leaderboard', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('stats_leaderboard')
+      .select('*')
+      .order('stat_value', { ascending: false })
+
+    if (error) {
+      console.error("Supabase fetch error:", error);
+      return res.status(500).json({ status: 'error', error });
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error("Unexpected fetch error:", err);
+    res.status(500).json({ status: 'error', error: err.message });
+  }
 });
 
 app.listen(port, '0.0.0.0', () => {
