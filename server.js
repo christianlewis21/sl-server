@@ -35,7 +35,7 @@ app.get('/leaderboard', async (req, res) => {
     const { data, error } = await supabase
       .from('stats_leaderboard')
       .select('*')
-      .order('stat_value', { ascending: false })
+      .order('steam_id', { ascending: false })
 
     if (error) {
       console.error("Supabase fetch error:", error);
