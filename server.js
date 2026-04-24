@@ -48,7 +48,6 @@ app.post('/submit', async (req, res) => {
 });
 
 app.get('/leaderboard', (req, res) => {
-  res.set('Connection', 'close');
   res.json(leaderboardCache);
 });
 
