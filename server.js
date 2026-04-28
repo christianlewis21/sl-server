@@ -30,6 +30,33 @@ app.post('/submit', async (req, res) => {
     }
 });
 
+app.get('/friends', async (req, res) => {
+  const steamID = req.query.steam_id;
+
+  if (!steamID) {
+    return res.status(400).json({ error: "Missing steam_id" });
+  }
+
+  const apiKey = process.env.STEAM_API_KEY;
+
+  const url =
+    `https://api.steampowered.com/ISteamUser/GetFriendList/v1/?key=${apiKey}&steamid=${steamID}&relationship=friend`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const friends = data?.friendslist?.friends || [];
+    const steamids = friends.map(f => f.steamid);
+
+    res.json(steamids);
+
+  } catch (err) {
+    console.error("Steam API error:", err);
+    res.status(500).json({ error: "Failed to fetch friends" });
+  }
+});
+
 app.get('/leaderboard', async (req, res) => {
   try {
     const { data, error } = await supabase
