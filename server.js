@@ -62,17 +62,42 @@ app.get('/leaderboard', async (req, res) => {
     const { data, error } = await supabase
       .from('stats_leaderboard')
       .select('*')
-      .order('steam_id', { ascending: false })
+      .order('steam_id', { ascending: false });
 
     if (error) {
       console.error("Supabase fetch error:", error);
-      return res.status(500).json({ status: 'error', error });
-    }
 
-    res.json(data);
+      const errBody = JSON.stringify({ status: 'error', error });
+      res.writeHead(500, {
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(errBody),
+        "Connection": "close",
+      });
+      return res.end(errBody);
+    }
+    
+    const body = JSON.stringify(data);
+
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+      "Content-Length": Buffer.byteLength(body),
+      "Connection": "close",
+    });
+
+    res.end(body);
+
   } catch (err) {
     console.error("Unexpected fetch error:", err);
-    res.status(500).json({ status: 'error', error: err.message });
+
+    const errBody = JSON.stringify({ status: 'error', error: err.message });
+
+    res.writeHead(500, {
+      "Content-Type": "application/json",
+      "Content-Length": Buffer.byteLength(errBody),
+      "Connection": "close",
+    });
+
+    res.end(errBody);
   }
 });
 
